@@ -1,8 +1,8 @@
 import json
 import os
 from typing import List, Union
-#import api
-#from textInfos import POSITION_SELECTION
+import api
+from textInfos import POSITION_SELECTION
 
 class cardLookup:
 	def __init__(self, file):
