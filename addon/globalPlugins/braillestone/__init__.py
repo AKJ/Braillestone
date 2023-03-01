@@ -4,6 +4,7 @@ from scriptHandler import script
 import ui
 import wx
 
+from . import helpers
 from . import hsutils
 
 cardDb= hsutils.cardLookup("cards.collectible.json") # hacky placeholder
@@ -19,7 +20,7 @@ class GlobalPlugin(_GlobalPlugin):
 		gesture="kb:NVDA+h"
 	)
 	def script_FindCardFromClipboard(self, gesture):
-		selection = hsutils.getSelectedText().strip()
+		selection = helpers.getSelectedText().strip()
 		if selection:
 			lookupCard(selection)
 		else:

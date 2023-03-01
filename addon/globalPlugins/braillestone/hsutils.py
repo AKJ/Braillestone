@@ -1,8 +1,6 @@
 import json
 import os
 from typing import List, Union
-import api
-from textInfos import POSITION_SELECTION
 
 class cardLookup:
 	def __init__(self, file):
@@ -13,7 +11,7 @@ class cardLookup:
 		with open(file, "r", encoding="utf8") as fh:
 			self.db = json.load(fh)
 
-	def cardSearch(self, identifier: Union[int, str], param: str, multiple: bool=False) -> list:
+	def findCard(self, identifier: Union[int, str], param: str, multiple: bool=False) -> list:
 		if multiple:
 			cardlist = [item for item in self.db if item[param] == identifier]
 		else:
@@ -46,32 +44,3 @@ class cardLookup:
 		for k, v in card.items():
 			cardstring += f"<p>{k}: {v}</p>\n"
 		return cardstring
-
-# adapted from Quick Dictionary by Oleksandr Gryshchenko <grisov.nvaccess@mailnull.com>
-def getSelectedText() -> str:
-	"""Retrieve the selected text.
-	If the selected text is missing - extract the text from the clipboard.
-	If the clipboard is empty or contains no text data - announce a warning.
-	@return: selected text, text from the clipboard, or an empty string
-	@rtype: str
-	"""
-	obj = api.getFocusObject()
-	treeInterceptor = obj.treeInterceptor
-	if hasattr(treeInterceptor, 'TextInfo') and not treeInterceptor.passThrough:
-		obj = treeInterceptor
-	try:
-		info = obj.makeTextInfo(POSITION_SELECTION)
-	except (RuntimeError, NotImplementedError):
-		info = None
-	if not info or info.isCollapsed:
-		try:
-			text = api.getClipData()
-		except Exception:
-			text = ''
-		if not text or not isinstance(text, str):
-			# Translators: User has pressed the shortcut key for translating selected text,
-			# but no text was actually selected and clipboard is clear
-			ui.message(_("There is no selected text, the clipboard is also empty, or its content is not text!"))
-			return ''
-		return text
-	return info.text
