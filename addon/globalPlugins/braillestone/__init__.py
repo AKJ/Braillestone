@@ -54,8 +54,8 @@ class GlobalPlugin(_GlobalPlugin):
 
 
 def lookupCard(card):
-	cardstring = cl.formatCard(card)
-	result = cardDb.findCard(card, "name")
+	cardstring = cardDb.formatCard(card)
+	result = cardDb.findCard(cardstring, "name")
 	if not result:
 		ui.browseableMessage(
 			# Translators: The specified card could not be found.
