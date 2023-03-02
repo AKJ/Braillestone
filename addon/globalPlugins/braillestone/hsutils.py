@@ -2,7 +2,7 @@ import json
 import os
 from typing import List, Union
 
-class cardLookup:
+class CardLookup:
 	def __init__(self, file):
 		self.file = file
 
@@ -18,6 +18,12 @@ class cardLookup:
 			cardlist = next((item for item in self.db if item[param] == identifier), None)
 		return cardlist
 
+	def formatCard(self, cardstring: str) -> str:
+		if "’" in cardstring:
+			cardstring = cardstring.replace("’", "'")
+		LITTLE_WORDS = ['a', 'an', 'and', 'for', 'in', 'of', 'on', 'the', 'to']
+		card = " ".join(w.capitalize() if w not in LITTLE_WORDS else w for w in cardstring.split())
+		return card
 
 	def processCard(self, card: dict) -> dict:
 		# Convert any lists into strings

@@ -7,7 +7,7 @@ import wx
 from . import helpers
 from . import hsutils
 
-cardDb= hsutils.cardLookup("cards.collectible.json") # hacky placeholder
+cardDb= hsutils.CardLookup("cards.collectible.json") # hacky placeholder
 cardDb.loadCards()
 
 class GlobalPlugin(_GlobalPlugin):
@@ -54,7 +54,8 @@ class GlobalPlugin(_GlobalPlugin):
 
 
 def lookupCard(card):
-	result = cardDb.cardSearch(card, "name")
+	cardstring = cl.formatCard(card)
+	result = cardDb.findCard(card, "name")
 	if not result:
 		ui.browseableMessage(
 			# Translators: The specified card could not be found.
