@@ -9,8 +9,7 @@ import wx
 from . import helpers
 from . import hsutils
 
-cardDb = hsutils.CardLibrary("cards.collectible.json")  # hacky placeholder
-cardDb.loadCards()
+cardDb = hsutils.CardLibrary()
 
 
 class GlobalPlugin(_GlobalPlugin):
