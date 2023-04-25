@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-import os
+import re
 from urllib.request import Request, urlopen
 from urllib.error import URLError
 from logHandler import log
@@ -17,6 +17,7 @@ class HearthstoneAPI:
 		self.url = f"{base_url}{build}{locale}"
 
 	def get(self, endpoint: str = "cards.json"):
+		data = []
 		fullURL = self.url + endpoint
 		user_agent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64)'
 		headers = {'User-Agent': user_agent}
@@ -35,17 +36,18 @@ class HearthstoneAPI:
 
 
 class CardLibrary:
-	def __init__(self, file) -> None:
-		self.file = file
+	def __init__(self) -> None:
+		self.api = HearthstoneAPI()
+		self.load()
 
-	def loadCards(self) -> list | None:
-		file = os.path.dirname(__file__) + "\\" + self.file
-		with open(file, "r", encoding="utf8") as fh:
-			self.db = json.load(fh)
+	def load(self):
+		res = self.api.get()
+		assert res is not None
+		self.db = res
 
 	def findCard(
 			self, identifier: int | str, param: str, multiple: bool = False
-	) -> list | None:
+	) -> list | dict | None:
 		if multiple:
 			cardlist = [item for item in self.db if item[param] == identifier]
 		else:
@@ -80,6 +82,7 @@ class CardLibrary:
 			card["stats"] = f"{card['attack']} attack, {card['health']} health."
 		else:
 			card["stats"] = None
+		card["text"] = self.formatCardText(card["text"])
 		keyOrder = [
 			"name",
 			"cost",
@@ -97,13 +100,16 @@ class CardLibrary:
 		]
 		return {k: card[k] for k in keyOrder if k in card and card[k] is not None}
 
-	def displayCard(self, cardData: dict[str, str]) -> str:
+	def displayCard(self, cardData) -> str:
 		card = self.processCard(cardData)
 		cardstring = []
 		for k, v in card.items():
 			cardstring.append(f"<p>{k}: {v}</p>")
 		return "\n".join(cardstring)
 
+	def formatCardText(self, text: str) -> str:
+		return re.sub('<[^<]+?>', '', text)
+	
 	def listSets(self) -> list:
 		setlist = []
 		setlist = [[v for k, v in i.items() if k == "set" and v not in setlist] for i in self.db]
