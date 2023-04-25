@@ -36,7 +36,7 @@ def load_txt(fp) -> StringsDict:
 	}
 
 
-def _load_globalstrings_from_web(locale="enUS") -> Optional[StringsDict]:
+def _load_globalstrings_from_web(locale="enUS") -> StringsDict | None:
 	with tempfile.TemporaryFile() as fp:
 		json_url = "https://api.hearthstonejson.com/v1/strings/%s/GLOBAL.json" % locale
 		if download_to_tempfile_retry(json_url, fp):

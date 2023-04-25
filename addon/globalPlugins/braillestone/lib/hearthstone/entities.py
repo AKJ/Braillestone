@@ -27,7 +27,7 @@ class Entity:
 		)
 
 	@property
-	def controller(self) -> Optional["Player"]:
+	def controller(self) -> "Player" | None:
 		return self.game.get_player(self.tags.get(GameTag.CONTROLLER, 0))
 
 	@property
@@ -74,14 +74,14 @@ class Game(Entity):
 		yield from self._entities.values()
 
 	@property
-	def current_player(self) -> Optional["Player"]:
+	def current_player(self) -> "Player" | None:
 		for player in self.players:
 			if player.tags.get(GameTag.CURRENT_PLAYER):
 				return player
 		return None
 
 	@property
-	def first_player(self) -> Optional["Player"]:
+	def first_player(self) -> "Player" | None:
 		for player in self.players:
 			if player.tags.get(GameTag.FIRST_PLAYER):
 				return player
@@ -91,7 +91,7 @@ class Game(Entity):
 	def setup_done(self) -> bool:
 		return self.tags.get(GameTag.NEXT_STEP, 0) > Step.BEGIN_MULLIGAN
 
-	def get_player(self, value: Union[int, str]) -> Optional["Player"]:
+	def get_player(self, value: Union[int, str]) -> "Player" | None:
 		for player in self.players:
 			if value in (player.player_id, player.name):
 				return player
@@ -143,7 +143,7 @@ class Game(Entity):
 				continue
 			entity.reset()
 
-	def find_entity_by_id(self, id: int) -> Optional[Entity]:
+	def find_entity_by_id(self, id: int) -> Entity | None:
 		# int() for LazyPlayer mainly...
 		id = int(id)
 		return self._entities.get(id)
@@ -231,7 +231,7 @@ class Player(Entity):
 				yield entity
 
 	@property
-	def hero(self) -> Optional["Card"]:
+	def hero(self) -> "Card" | None:
 		entity_id = self.tags.get(GameTag.HERO_ENTITY, 0)
 		if entity_id:
 			return self.game.find_entity_by_id(entity_id)
@@ -249,7 +249,7 @@ class Player(Entity):
 				yield cast(Card, entity)
 
 	@property
-	def starting_hero(self) -> Optional["Card"]:
+	def starting_hero(self) -> "Card" | None:
 		if self.initial_hero_entity_id:
 			return cast(Card, self.game.find_entity_by_id(self.initial_hero_entity_id))
 

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import gui
 from globalPluginHandler import GlobalPlugin as _GlobalPlugin
 from scriptHandler import script
@@ -7,15 +9,17 @@ import wx
 from . import helpers
 from . import hsutils
 
-cardDb= hsutils.CardLookup("cards.collectible.json") # hacky placeholder
+cardDb = hsutils.CardLibrary("cards.collectible.json")  # hacky placeholder
 cardDb.loadCards()
+
 
 class GlobalPlugin(_GlobalPlugin):
 	def __init__(self) -> None:
 		super().__init__()
 		self.dialog = None
+
 	@script(
-		description = "Look up Hearthstone card from clipboard",
+		description="Look up Hearthstone card from clipboard",
 		category="Braillestone",
 		gesture="kb:NVDA+h"
 	)
@@ -42,9 +46,12 @@ class GlobalPlugin(_GlobalPlugin):
 			gui.mainFrame,
 			"Enter card name to look up.",
 			"Look up Hearthstone card",
-			style = wx.OK|wx.CANCEL
+			style=wx.OK | wx.CANCEL
 		)
+		
 		def callback(result):
+			if not self.dialog:
+				return
 			if result == wx.ID_OK:
 				text = self.dialog.GetValue().strip()
 				if text:
@@ -53,13 +60,13 @@ class GlobalPlugin(_GlobalPlugin):
 		gui.runScriptModalDialog(self.dialog, callback)
 
 
-def lookupCard(card):
+def lookupCard(card: str):
 	cardstring = cardDb.formatCard(card)
-	result = cardDb.findCard(cardstring, "name")
-	if not result:
+	res = cardDb.findCard(cardstring, "name")
+	if not res:
 		ui.browseableMessage(
-			# Translators: The specified card could not be found.
+			# Translators: The specified card could not be found
 			f"Could not find card {card}.", "Card not found", isHtml=True)
 		return None
-	result = cardDb.displayCard(result)
+	result = cardDb.displayCard(res)
 	ui.browseableMessage(result, "Hearthstone Card Lookup", isHtml=True)

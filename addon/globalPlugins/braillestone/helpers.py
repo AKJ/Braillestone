@@ -7,13 +7,15 @@ from textInfos import POSITION_SELECTION
 PLUGIN_DIRECTORY = os.path.abspath(os.path.dirname(__file__))
 LIB_DIRECTORY = os.path.join(PLUGIN_DIRECTORY, "lib")
 
+
 @contextlib.contextmanager
 def import_bundled(packages_path=LIB_DIRECTORY):
-    sys.path.insert(0, packages_path)
-    try:
-        yield
-    finally:
-        sys.path.remove(packages_path)
+	sys.path.insert(0, packages_path)
+	try:
+		yield
+	finally:
+		sys.path.remove(packages_path)
+
 
 # adapted from Quick Dictionary by Oleksandr Gryshchenko <grisov.nvaccess@mailnull.com>
 def getSelectedText() -> str:

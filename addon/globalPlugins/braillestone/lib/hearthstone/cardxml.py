@@ -1,5 +1,5 @@
 import tempfile
-from typing import Any, Callable, Iterator
+from typing import Any, Callable, Iterator, Tuple
 
 from .enums import (
 	CardClass, CardSet, CardType, Faction, GameTag,
@@ -101,16 +101,16 @@ class CardXML:
 			elif type == "LocString":
 				for loc_element in e:
 					self.strings[tag][loc_element.tag] = loc_element.text
-			elif tag == GameTag.HERO_POWER:
-				self.hero_power = e.attrib.get("cardID")
 			else:
+				if tag == GameTag.HERO_POWER:
+					self.hero_power = e.attrib.get("cardID")
 				self.tags[tag] = value
 
 		for e in xml.findall("./ReferencedTag"):
 			tag, type, value = _unpack_tag_xml(e)
 			self.referenced_tags[tag] = value
 
-		if self.tags.get(GameTag.HERO_POWER):
+		if self.hero_power is None and self.tags.get(GameTag.HERO_POWER):
 			i = int(GameTag.HERO_POWER)
 			t = xml.findall('./Tag[@enumID="%i"]' % (i))
 			if t is not None:
@@ -409,7 +409,7 @@ dbf_cache: dict = {}
 XML_URL = "https://api.hearthstonejson.com/v1/latest/CardDefs.xml"
 
 
-def _bootstrap_from_web(parse: Callable[[Iterator[tuple[str, Any]]], None]):
+def _bootstrap_from_web(parse: Callable[[Iterator[Tuple[str, Any]]], None]):
 	with tempfile.TemporaryFile(mode="rb+") as fp:
 		if download_to_tempfile_retry(XML_URL, fp):
 			fp.flush()
@@ -418,7 +418,7 @@ def _bootstrap_from_web(parse: Callable[[Iterator[tuple[str, Any]]], None]):
 			parse(ElementTree.iterparse(fp, events=("start", "end",)))
 
 
-def _bootstrap_from_library(parse: Callable[[Iterator[tuple[str, Any]]], None], path=None):
+def _bootstrap_from_library(parse: Callable[[Iterator[Tuple[str, Any]]], None], path=None):
 	from hearthstone_data import get_carddefs_path
 
 	if path is None:
@@ -433,7 +433,7 @@ def _load(path, locale, cache, attr):
 	if cache_key not in cache:
 		db = {}
 
-		def parse(context: Iterator[tuple[str, Any]]):
+		def parse(context: Iterator[Tuple[str, Any]]):
 			nonlocal db
 			root = None
 			for action, elem in context:
