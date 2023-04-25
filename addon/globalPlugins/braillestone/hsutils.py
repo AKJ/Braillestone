@@ -2,6 +2,36 @@ from __future__ import annotations
 
 import json
 import os
+from urllib.request import Request, urlopen
+from urllib.error import URLError
+from logHandler import log
+
+
+class HearthstoneAPI:
+	"""
+	A wrapper for pulling card definition files from the Hearthstone JSON API
+	"""
+
+	def __init__(
+			self, base_url: str = "https://api.hearthstonejson.com/v1/", build: str = "latest/", locale: str = "enUS/"):
+		self.url = f"{base_url}{build}{locale}"
+
+	def get(self, endpoint: str = "cards.json"):
+		fullURL = self.url + endpoint
+		user_agent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64)'
+		headers = {'User-Agent': user_agent}
+		req = Request(fullURL, headers=headers)
+		try:
+			with urlopen(req) as response:
+				data = json.loads(response.read())
+				return data
+		except URLError as e:
+			if hasattr(e, 'reason'):
+				log.error("We failed to reach a server.")
+				log.error("Reason: ", e.reason)
+			elif hasattr(e, 'code'):
+				log.error("The server couldn\'t fulfill the request.")
+				log.error("Error code: ", e.code)
 
 
 class CardLibrary:
