@@ -72,7 +72,7 @@ class CardLibrary:
 			for key, value in card.items()
 		}
 		# Clean up some strings for display
-		if card["cost"]:
+		if "cost" in card:
 			card["cost"] = f"{card['cost']} mana"
 		if card["type"] == "WEAPON":
 			card["stats"] = f"{card['attack']} attack, {card['durability']} durability."
