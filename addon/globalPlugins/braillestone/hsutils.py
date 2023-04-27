@@ -98,7 +98,7 @@ class CardLibrary:
 			"mechanics",
 			"artist",
 		]
-		return {k: card[k] for k in keyOrder if k in card and card[k] is not None}
+		return {k.title(): card[k] for k in keyOrder if k in card and card[k] is not None}
 
 	def displayCard(self, cardData) -> str:
 		card = self.processCard(cardData)
