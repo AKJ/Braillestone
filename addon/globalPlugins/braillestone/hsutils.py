@@ -1,11 +1,8 @@
 from __future__ import annotations
 
-import json
 import re
-from urllib.request import Request, urlopen
-from urllib.error import URLError
+import requests
 from logHandler import log
-
 
 class HearthstoneAPI:
 	"""
@@ -17,22 +14,15 @@ class HearthstoneAPI:
 		self.url = f"{base_url}{build}{locale}"
 
 	def get(self, endpoint: str = "cards.json"):
-		data = []
 		fullURL = self.url + endpoint
-		user_agent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64)'
-		headers = {'User-Agent': user_agent}
-		req = Request(fullURL, headers=headers)
 		try:
-			with urlopen(req) as response:
-				data = json.loads(response.read())
-				return data
-		except URLError as e:
-			if hasattr(e, 'reason'):
-				log.error("We failed to reach a server.")
-				log.error("Reason: ", e.reason)
-			elif hasattr(e, 'code'):
-				log.error("The server couldn\'t fulfill the request.")
-				log.error("Error code: ", e.code)
+			response = requests.get(fullURL)
+			response.raise_for_status()
+			data = response.json()
+			return data
+		except requests.exceptions.RequestException as e:
+			log.error("The server couldn\'t fulfill the request.")
+			log.error(f"Error code: {e}")
 
 
 class CardLibrary:
