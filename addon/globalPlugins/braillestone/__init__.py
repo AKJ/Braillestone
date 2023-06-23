@@ -27,7 +27,8 @@ class GlobalPlugin(_GlobalPlugin):
 		if selection:
 			lookupCard(selection)
 		else:
-			ui.message("Nothing selected.")
+			# Translators: No text was selected
+			ui.message(_("Nothing selected."))
 
 	@script(
 		description="Find Hearthstone card dialog",
@@ -37,7 +38,8 @@ class GlobalPlugin(_GlobalPlugin):
 	def script_FindCardDialog(self, gesture):
 		if self.dialog:
 			if self.dialog.IsActive():
-				ui.message("dialog already open.")
+				# Translators: The specified dialog is already open
+				ui.message(_("dialog already open."))
 				return
 			else:
 				self.dialog.Close()
@@ -65,7 +67,7 @@ def lookupCard(card: str):
 	if not res:
 		ui.browseableMessage(
 			# Translators: The specified card could not be found
-			f"Could not find card {card}.", "Card not found", isHtml=True)
+			_("Could not find card {}.").format(card), "Card not found", isHtml=True)
 		return None
 	result = displayCard(res)
 	ui.browseableMessage(result, "Hearthstone Card Lookup", isHtml=True)
