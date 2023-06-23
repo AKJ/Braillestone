@@ -55,7 +55,7 @@ class CardLibrary:
 		)
 		return card
 
-	def processCard(self, card: dict) -> dict:
+	def processCard(self, card: dict) -> list:
 		# Convert any lists into strings
 		card = {
 			key: ", ".join(value) if isinstance(value, list) else value
@@ -65,37 +65,20 @@ class CardLibrary:
 		if "cost" in card:
 			card["cost"] = f"{card['cost']} mana"
 		if card["type"] == "WEAPON":
-			card["stats"] = f"{card['attack']} attack, {card['durability']} durability."
+			card["stats"] = f"{card['attack']} {card['durability']}."
 		elif card["type"] == "LOCATION":
 			card["stats"] = f"{card['durability']} durability."
 		elif card["type"] == "MINION":
-			card["stats"] = f"{card['attack']} attack, {card['health']} health."
+			card["stats"] = f"{card['attack']} {card['health']}"
 		else:
 			card["stats"] = None
 		card["text"] = self.formatCardText(card["text"])
-		keyOrder = [
-			"name",
-			"cost",
-			"stats",
-			"text",
-			"type",
-			"spellSchool",
-			"races",
-			"cardClass",
-			"rarity",
-			"set",
-			"flavor",
-			"mechanics",
-			"artist",
-		]
-		return {k.title(): card[k] for k in keyOrder if k in card and card[k] is not None}
+		basics = ["name", "cost", "stats", "text", "cardClass", "spellSchool", "races", "type", "rarity", "set"]
+		extras = ["flavor", "mechanics", "artist"]
+		processedCard = [card[i] for i in basics if i in card and card[i] is not None]
+		processedCard.extend([f"{k.title()}: {card[k]}"] for k in extras if k in card and card[k] is not None)
+		return processedCard
 
-	def displayCard(self, cardData) -> str:
-		card = self.processCard(cardData)
-		cardstring = []
-		for k, v in card.items():
-			cardstring.append(f"<p>{k}: {v}</p>")
-		return "\n".join(cardstring)
 
 	def formatCardText(self, text: str) -> str:
 		return re.sub('<[^<]+?>', '', text)

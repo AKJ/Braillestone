@@ -67,5 +67,10 @@ def lookupCard(card: str):
 			# Translators: The specified card could not be found
 			f"Could not find card {card}.", "Card not found", isHtml=True)
 		return None
-	result = cardDb.displayCard(res)
+	result = displayCard(res)
 	ui.browseableMessage(result, "Hearthstone Card Lookup", isHtml=True)
+
+def displayCard(card):
+	cardstring = cardDb.processCard(card)
+	res = "\n".join([f"<p>{line}</p>" for line in cardstring])
+	return res
