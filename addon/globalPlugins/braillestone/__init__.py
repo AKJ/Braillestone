@@ -38,15 +38,17 @@ class GlobalPlugin(_GlobalPlugin):
 	def script_FindCardDialog(self, gesture):
 		if self.dialog:
 			if self.dialog.IsActive():
-				# Translators: The specified dialog is already open
+				# Translators: The Hearthstone card lookup dialog is already open
 				ui.message(_("dialog already open."))
 				return
 			else:
 				self.dialog.Close()
 		self.dialog = wx.TextEntryDialog(
 			gui.mainFrame,
-			"Enter card name to look up.",
-			"Look up Hearthstone card",
+			# Translators: Enter card name to look up
+			_("Enter card name to look up."),
+			# Translators: The title of the window to look up a Hearthstone card
+			_("Look up Hearthstone card"),
 			style=wx.OK | wx.CANCEL
 		)
 		
@@ -67,10 +69,12 @@ def lookupCard(card: str):
 	if not res:
 		ui.browseableMessage(
 			# Translators: The specified card could not be found
-			_("Could not find card {}.").format(card), "Card not found", isHtml=True)
+			_("Could not find card {}.").format(card),
+			# Translators: The title of the window when the card could not be found
+			_("Card not found"), isHtml=True)
 		return None
 	result = displayCard(res)
-	ui.browseableMessage(result, "Hearthstone Card Lookup", isHtml=True)
+	ui.browseableMessage(result, cardstring, isHtml=True)
 
 def displayCard(card):
 	cardstring = cardDb.processCard(card)
