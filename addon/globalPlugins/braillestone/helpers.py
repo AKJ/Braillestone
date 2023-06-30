@@ -2,6 +2,7 @@ import os
 import sys
 import contextlib
 import api
+import ui
 from textInfos import POSITION_SELECTION
 
 PLUGIN_DIRECTORY = os.path.abspath(os.path.dirname(__file__))
